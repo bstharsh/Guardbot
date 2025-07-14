@@ -1,4 +1,4 @@
-import os
+byyimport os
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
@@ -52,10 +52,10 @@ async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = int(context.args[0])
     logs = collection.find({"user_id": user_id})
     msg = f"🧾 Logs for user ID {user_id}:"
-"
+found = False
     for log in logs:
         msg += f"{log['action'].upper()} — Reason: {log['reason']}
-"
+msg += f"{log['action'].upper()} — Reason: {log['reason']}\\n"
     await update.message.reply_text(msg or "No logs found.")
 
 if __name__ == "__main__":
