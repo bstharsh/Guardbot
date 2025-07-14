@@ -17,11 +17,13 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message:
         await update.message.reply_text("👋 Welcome! Please join @Harshified to use the bot.")
+    if update.message:
+        await update.message.reply_text("👋 Welcome! Please join @Harshified to use the bot.")
 
 async def warn(update: Update, context: ContextTypes.DEFAULT_TYPE):
-if not context.args:
-await update.message.reply_text("❗Usage: /warn @username reason")
-return
+    if not context.args:
+    await update.message.reply_text("❗Usage: /warn @username reason")
+    return
 user = update.message.reply_to_message.from_user if update.message.reply_to_message else None
 reason = " ".join(context.args)
 if user:
