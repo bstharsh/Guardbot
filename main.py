@@ -50,12 +50,16 @@ async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("❗Usage: /details user_id")
         return
-    user_id = int(context.args[0])
-    logs = collection.find({"user_id": user_id})
-    msg = f"📄 Logs for user ID {user_id}:"
-msg += f"{log.get('action', 'UNKNOWN').upper()} — Reason: {log.get('reason', 'No reason')}\n"
-    found = False
-    for log in logs:
+    msg = f"📄 Logs for user ID {user_id}:\n"
+found = False
+for log in logs:
+    found = True
+    action = log.get("action", "UNKNOWN").upper()
+    reason = log.get("reason", "No reason provided")
+    msg += f"{action} — Reason: {reason}\n"
+if not found:
+    msg = "No logs found for this user."
+await update.message.reply_text(msg)
         found = True
         msg += f"{log['action'].upper()} — Reason: {log['reason']}\n"
     if not found:
