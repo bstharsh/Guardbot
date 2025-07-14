@@ -1,13 +1,10 @@
 import os
-from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from pymongo import MongoClient
 
-load_dotenv()
-
-BOT_TOKEN = os.getenv("7519780244:AAH82o60aEhMBkOoYcyvF3CWDz08437IxZI")
-MONGO_URI = os.getenv("mongodb+srv://bstharshdeals:RhTzDtPEGMxppRln@cluster0.qkwtmlu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+BOT_TOKEN = "7519780244:AAH82o60aEhMBkOoYcyvF3CWDz08437IxZI"
+MONGO_URI = "mongodb+srv://bstharshdeals:RhTzDtPEGMxppRln@cluster0.qkwtmlu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 client = MongoClient(MONGO_URI)
 db = client["guardbot"]
@@ -50,23 +47,22 @@ async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if not context.args:
         await update.message.reply_text("❗Usage: /details user_id")
         return
+    user_id = int(context.args[0])
+    logs = collection.find({"user_id": user_id})
     msg = f"📄 Logs for user ID {user_id}:\n"
-found = False
-for log in logs:
-    found = True
-    action = log.get("action", "UNKNOWN").upper()
-    reason = log.get("reason", "No reason provided")
-    msg += f"{action} — Reason: {reason}\n"
-if not found:
-    msg = "No logs found for this user."
-await update.message.reply_text(msg)
+    found = False
+    for log in logs:
         found = True
-        msg += f"{log['action'].upper()} — Reason: {log['reason']}\n"
+        action = log.get("action", "UNKNOWN").upper()
+        reason = log.get("reason", "No reason provided")
+        msg += f"{action} — Reason: {reason}\n"
     if not found:
         msg = "No logs found for this user."
     await update.message.reply_text(msg)
 
 if __name__ == "__main__":
+    if not BOT_TOKEN:
+        raise ValueError("BOT_TOKEN is not set!")
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("warn", warn))
