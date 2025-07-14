@@ -53,7 +53,7 @@ async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = int(context.args[0])
     logs = collection.find({"user_id": user_id})
     msg = f"📄 Logs for user ID {user_id}:"
-"
+msg += f"{log.get('action', 'UNKNOWN').upper()} — Reason: {log.get('reason', 'No reason')}\n"
     found = False
     for log in logs:
         found = True
