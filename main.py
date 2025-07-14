@@ -40,7 +40,7 @@ async def warn(update: Update, context: ContextTypes.DEFAULT_TYPE):
         {"$push": {"actions": {"type": "warn", "reason": reason}}},
         upsert=True
     )
-    await update.message.reply_text(f"⚠️ {user.mention_html()} has been warned.
+    await update.message.reply_text(f"⚠️ {user.mention_html()} has been warned.", parse_mode="HTML")
 Reason: {reason}", parse_mode="HTML")
 
 async def ban(update: Update, context: ContextTypes.DEFAULT_TYPE):
