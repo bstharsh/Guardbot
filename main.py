@@ -1,60 +1,58 @@
-import os
-from telegram import Update, ChatMember
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, ChatMemberHandler
+from telegram import Update
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from pymongo import MongoClient
 
+# === Your bot token and MongoDB URI ===
 BOT_TOKEN = "7519780244:AAH82o60aEhMBkOoYcyvF3CWDz08437IxZI"
 MONGO_URI = "mongodb+srv://harshpvt1029:Sk6JkeQQGNIzj68l@cluster0.kiev6oo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
+# === Connect to MongoDB ===
 client = MongoClient(MONGO_URI)
 db = client["guardbot"]
 collection = db["user_logs"]
-usernames = db["username_logs"]
 
-def is_admin(member):
-    return member.status in ['administrator', 'creator']
-
+# === /start command ===
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     await update.message.reply_text(
-        f"👋 Welcome {user.first_name}!\nPlease join @Harshified to use the bot."
+        f"👋 Welcome {user.first_name}! Please join @Harshified to use the bot."
     )
 
+# === /warn command ===
 async def warn(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    admin = await context.bot.get_chat_member(update.effective_chat.id, update.effective_user.id)
-    if not is_admin(admin):
-        await update.message.reply_text("🚫 Only admins can use this command.")
-        return
     if not context.args:
-        await update.message.reply_text("❗ Usage: /warn <reason> (reply to user)")
+        await update.message.reply_text("❗Usage: /warn @username reason")
         return
     user = update.message.reply_to_message.from_user if update.message.reply_to_message else None
     reason = " ".join(context.args)
     if user:
-        await update.message.reply_text(f"⚠️ {user.mention_html()} has been warned.\nReason: {reason}", parse_mode="HTML")
-        collection.insert_one({"action": "warn", "user_id": user.id, "username": user.username, "reason": reason})
+        await update.message.reply_text(f"⚠️ {user.mention_html()} has been warned.", parse_mode="HTML")
+        await update.message.reply_text(f"Reason: {reason}", parse_mode="HTML")
+        collection.insert_one({
+            "action": "warn",
+            "user_id": user.id,
+            "username": user.username,
+            "reason": reason
+        })
 
+# === /ban command ===
 async def ban(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    admin = await context.bot.get_chat_member(update.effective_chat.id, update.effective_user.id)
-    if not is_admin(admin):
-        await update.message.reply_text("🚫 Only admins can use this command.")
-        return
-    if not context.args:
-        await update.message.reply_text("❗ Usage: /ban <reason> (reply to user)")
-        return
     user = update.message.reply_to_message.from_user if update.message.reply_to_message else None
     reason = " ".join(context.args)
     if user:
-        await update.message.reply_text(f"🚫 {user.mention_html()} has been banned.\nReason: {reason}", parse_mode="HTML")
-        collection.insert_one({"action": "ban", "user_id": user.id, "username": user.username, "reason": reason})
+        await update.message.reply_text(f"🚫 {user.mention_html()} has been banned.", parse_mode="HTML")
+        await update.message.reply_text(f"Reason: {reason}", parse_mode="HTML")
+        collection.insert_one({
+            "action": "ban",
+            "user_id": user.id,
+            "username": user.username,
+            "reason": reason
+        })
 
+# === /details command ===
 async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    admin = await context.bot.get_chat_member(update.effective_chat.id, update.effective_user.id)
-    if not is_admin(admin):
-        await update.message.reply_text("🚫 Only admins can use this command.")
-        return
     if not context.args:
-        await update.message.reply_text("❗ Usage: /details <user_id>")
+        await update.message.reply_text("❗Usage: /details user_id")
         return
     try:
         user_id = int(context.args[0])
@@ -68,20 +66,15 @@ async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
         found = True
         msg += f"{log['action'].upper()} — Reason: {log['reason']}\n"
     if not found:
-        msg = "ℹ️ No logs found for this user."
+        msg = "No logs found for this user."
     await update.message.reply_text(msg)
 
-async def track_username(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user = update.chat_member.new_chat_member.user
-    if user.username:
-        usernames.update_one({"user_id": user.id}, {"$set": {"username": user.username}}, upsert=True)
-
+# === Run the bot ===
 if __name__ == "__main__":
     app = ApplicationBuilder().token(BOT_TOKEN).build()
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("warn", warn))
     app.add_handler(CommandHandler("ban", ban))
     app.add_handler(CommandHandler("details", details))
-    app.add_handler(ChatMemberHandler(track_username, ChatMemberHandler.CHAT_MEMBER))
-    print("✅ Bot started successfully...")
+    print("✅ Bot is running...")
     app.run_polling()
