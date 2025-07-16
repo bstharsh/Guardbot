@@ -4,9 +4,9 @@ from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from pymongo import MongoClient
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
-MONGO_URI = os.getenv("MONGO_URI")
-FORCE_JOIN_CHANNEL = os.getenv("FORCE_JOIN_CHANNEL")
+BOT_TOKEN = os.getenv("7519780244:AAH82o60aEhMBkOoYcyvF3CWDz08437IxZI")
+MONGO_URI = os.getenv("mongodb+srv://bstharshdeals:RhTzDtPEGMxppRln@cluster0.qkwtmlu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
+FORCE_JOIN_CHANNEL = os.getenv("@Harshified")
 
 client = MongoClient(MONGO_URI)
 db = client["modbot"]
