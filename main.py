@@ -46,9 +46,7 @@ async def warn(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "username": user.username,
             "reason": reason
         })
-        await update.message.reply_text(f"⚠️ {user.mention_html()} has been warned.
-Reason: {reason}", parse_mode="HTML")
-
+        await update.message.reply_text(f"⚠️ {user.mention_html()} has been warned.", parse_mode="HTML")
 async def ban(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.message.reply_to_message.from_user if update.message.reply_to_message else None
     reason = " ".join(context.args)
