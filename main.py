@@ -57,7 +57,7 @@ async def ban(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "username": user.username,
             "reason": reason
         })
-        await update.message.reply_text(f"🚫 {user.mention_html()} has been banned.
+        await update.message.reply_text(f"🚫 {user.mention_html()} has been banned.", parse_mode="HTML").
 Reason: {reason}", parse_mode="HTML")
 
 async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
