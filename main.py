@@ -6,7 +6,7 @@ from pymongo import MongoClient
 
 # Hardcoded tokens (no .env needed)
 BOT_TOKEN = "7519780244:AAH82o60aEhMBkOoYcyvF3CWDz08437IxZI"
-MONGO_URI = "mongodb+srv://bstharshdeals:RhTzDtPEGMxppRln@cluster0.qkwtmlu.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+MONGO_URI = "mongodb+srv://harshpvt1029:Sk6JkeQQGNIzj68l@cluster0.kiev6oo.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 FORCE_JOIN_CHANNEL = "@Harshified"
 
 client = MongoClient(MONGO_URI)
