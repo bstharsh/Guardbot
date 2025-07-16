@@ -72,13 +72,11 @@ async def details(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     logs = logs_collection.find({"user_id": user_id})
-    msg = f"📄 Logs for user ID {user_id}:
-"
+    msg = f"📄 Logs for user ID {user_id}:"
     found = False
     for log in logs:
         found = True
-        msg += f"{log['action'].upper()} — Reason: {log['reason']}
-"
+        msg += f"{log['action'].upper()} — Reason: {log['reason']}"
     if not found:
         msg = "No logs found for this user."
     await update.message.reply_text(msg)
